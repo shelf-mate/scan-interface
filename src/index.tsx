@@ -17,6 +17,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
+  
     <ProductTemplateProvider>
       <ProductProvider>
         <UnitProvider>

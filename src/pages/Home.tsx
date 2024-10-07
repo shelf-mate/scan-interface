@@ -5,6 +5,7 @@ import ProductItemTemplate from "../components/ProductItemTemplate";
 import { useProduct } from "../providers/ProductProvider";
 import { Product } from "@shelf-mate/api-client-ts";
 import StorageCard from "../components/StorageCard";
+import { Toaster } from "react-hot-toast";
 
 interface Storage {
   id: number;
@@ -71,6 +72,7 @@ const Home: React.FC = () => {
       </div>
 
       <Modal />
+      <Toaster position="top-right" />
     </div>
   );
 };

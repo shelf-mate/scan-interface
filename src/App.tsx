@@ -11,7 +11,6 @@ import Modal from "./components/AddModal";
 
 function App() {
   const { currentProductTemplate } = useProductTemplate();
-  console.log(currentProductTemplate);
   return (
     <div className="App">
       <h1>{currentProductTemplate?.name}</h1>

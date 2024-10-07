@@ -35,13 +35,9 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
     // Connection opened
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data);
-      console.log(data);
       if (data.command === "scan") {
-        console.log(data);
-
         getProductTemplateByEan(data.data.ean)
           .then((res) => {
-            console.log(res);
             // @ts-ignore
             setIsNew(res.new);
             // @ts-ignore

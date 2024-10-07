@@ -8,9 +8,6 @@ export default function EditModal({}: EditModalProps) {
   const { currentProductTemplate, isNew } = useProductTemplate();
   const modalRef = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    console.log("currentProductTemplate edit modal", isNew);
-    console.log("currentProductTemplate edit modal", currentProductTemplate);
-
     if (currentProductTemplate && !isNew) {
       modalRef.current?.showModal();
     } else {
@@ -24,7 +21,7 @@ export default function EditModal({}: EditModalProps) {
           Successfully added new Product! You may edit it{" "}
           {currentProductTemplate?.name} here!
         </h3>
-        <ModalInputs />
+        {/* <ModalInputs /> */}
       </div>
     </dialog>
   );

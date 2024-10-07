@@ -21,4 +21,12 @@ const UnitProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
-export { UnitProvider, UnitContext };
+const useUnit = () => {
+  const context = React.useContext(UnitContext);
+  if (context === undefined) {
+    throw new Error("useUnits must be used within a UnitProvider");
+  }
+  return context;
+};
+
+export { useUnit, UnitProvider, UnitContext };
