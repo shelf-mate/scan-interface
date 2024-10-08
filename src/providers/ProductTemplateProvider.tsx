@@ -30,7 +30,9 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
   const [isNew, setIsNew] = useState<boolean>(true);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8000");
+    const socket = new WebSocket(
+      process.env.REACT_APP_SCAN_SERVER_URL ?? "http://localhost:8000"
+    );
 
     // Connection opened
     socket.addEventListener("message", (event) => {
