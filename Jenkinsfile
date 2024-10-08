@@ -1,8 +1,5 @@
 @Library("teckdigital") _
-def appName = "iam-ui"
-def localBranchToGitopsValuesPath = [
-    'main': 'core/iam/iam-ui-values.yml',
-]
+def appName = "scan-interface"
 
 pipeline {
    agent {
