@@ -25,9 +25,9 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [productTemplate, setProductTemplate] = useState<
     ProductTemplate | undefined
-  >(undefined);
+  >();
 
-  const [isNew, setIsNew] = useState<boolean>(false);
+  const [isNew, setIsNew] = useState<boolean>(true);
 
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:8000");
