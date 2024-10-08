@@ -10,14 +10,14 @@ import { init } from "@shelf-mate/api-client-ts";
 import { ProductProvider } from "./providers/ProductProvider";
 import { UnitProvider } from "./providers/UnitProvider";
 import { CategoryProvider } from "./providers/CategoryProvider";
-init({ baseURL: "http://localhost:3000" });
+init({ baseURL: process.env.REACT_APP_BACKEND_URL });
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-  
     <ProductTemplateProvider>
       <ProductProvider>
         <UnitProvider>
