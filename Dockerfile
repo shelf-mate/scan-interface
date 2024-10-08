@@ -1,5 +1,5 @@
 # Node.js Build Stage
-FROM node:20 AS build
+FROM arm64v8/node:20 AS build
 
 # Set the working directory
 WORKDIR /app
@@ -18,7 +18,7 @@ COPY . .
 RUN npm run build
 
 # Nginx Serve Stage
-FROM nginx:alpine
+FROM arm64v8/nginx:alpine
 
 # Copy the build output to the Nginx HTML directory
 COPY --from=build /app/build /usr/share/nginx/html

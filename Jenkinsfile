@@ -15,7 +15,6 @@ pipeline {
                     script {
                         insertGithubNpmRegistryInfo(secretName: "tpausl-github-token", scope: "shelf-mate")
                         buildDockerImage(additionalImageTags: ["latest-arm"], imageName: "shelf-mate/scan-interface", buildArgs: ["--custom-platform=linux/arm"])
-                        buildDockerImage(additionalImageTags: ["latest"], imageName: "shelf-mate/scan-interface")
                     }
                 }
             }
