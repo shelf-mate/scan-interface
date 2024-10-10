@@ -1,17 +1,20 @@
 import React, { useEffect } from "react";
 import logo from "./logo.svg";
+import Home from "./pages/Home";
 import {
   init,
   getProductTemplates,
   createProduct,
 } from "@shelf-mate/api-client-ts";
-
-init({ baseURL: "http://localhost:3000" });
+import { useProductTemplate } from "./providers/ProductTemplateProvider";
+import Modal from "./components/AddModal";
 
 function App() {
+  const { currentProductTemplate } = useProductTemplate();
   return (
     <div className="App">
-      <h1>Hello World</h1>
+      <h1>{currentProductTemplate?.name}</h1>
+      <Home />
     </div>
   );
 }
