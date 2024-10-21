@@ -1,4 +1,9 @@
-import { createProduct, getProducts, Product } from "@shelf-mate/api-client-ts";
+import {
+  createProduct,
+  getProducts,
+  Product,
+  ProductCreateData,
+} from "@shelf-mate/api-client-ts";
 import React, {
   createContext,
   useContext,
@@ -9,7 +14,7 @@ import React, {
 
 interface ProductContextType {
   products: Product[];
-  addProduct: (product: Product) => void;
+  addProduct: (product: ProductCreateData) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -19,7 +24,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [products, setProducts] = useState<Product[]>([]);
 
-  const addProduct = (product: Product) => {
+  const addProduct = (product: ProductCreateData) => {
     createProduct(product).then((res) => {
       //@ts-ignore
       setProducts([...products, res.data]);

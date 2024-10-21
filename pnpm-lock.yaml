@@ -12,8 +12,8 @@ importers:
         specifier: ^7.13.2
         version: 7.13.2(@mantine/core@7.13.2(@mantine/hooks@7.13.2(react@18.3.1))(@types/react@18.3.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.13.2(react@18.3.1))(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@shelf-mate/api-client-ts':
-        specifier: link:..\shelf-mate-api-client-ts
-        version: link:../shelf-mate-api-client-ts
+        specifier: ^1.0.15
+        version: 1.0.15(axios@1.7.7)
       '@testing-library/jest-dom':
         specifier: ^5.17.0
         version: 5.17.0
@@ -1167,6 +1167,11 @@ packages:
 
   '@rushstack/eslint-patch@1.10.4':
     resolution: {integrity: sha512-WJgX9nzTqknM393q1QJDJmoW28kUfEnybeTfVNcNAPnIx210RXm2DiXiHzfNPJNIUUb1tJnz/l4QGtJ30PgWmA==}
+
+  '@shelf-mate/api-client-ts@1.0.15':
+    resolution: {integrity: sha512-b40xIaPqxNd4YWX3Sso3LVPip+Fx3IKFms9jsv0upNEnZx73Hs8MA33IIuBp1bKGv67MHy2JEs6V7U1HPZkiSw==, tarball: https://npm.pkg.github.com/download/@shelf-mate/api-client-ts/1.0.15/fc43c4c0d73f847f009be81157a29238f9981962}
+    peerDependencies:
+      axios: ^1.7.7
 
   '@sinclair/typebox@0.24.51':
     resolution: {integrity: sha512-1P1OROm/rdubP5aFDSZQILU0vrLCJ4fvHt6EoqHEM+2D/G5MK3bIaymUKLit8Js9gbns5UyJnkP/TZROLw4tUA==}
@@ -7142,6 +7147,10 @@ snapshots:
   '@rtsao/scc@1.1.0': {}
 
   '@rushstack/eslint-patch@1.10.4': {}
+
+  '@shelf-mate/api-client-ts@1.0.15(axios@1.7.7)':
+    dependencies:
+      axios: 1.7.7
 
   '@sinclair/typebox@0.24.51': {}
 

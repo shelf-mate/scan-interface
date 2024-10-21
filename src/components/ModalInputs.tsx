@@ -100,6 +100,9 @@ export default function ModalInputs({
             onChange={(s) => onChange({ ...productEditData, unitId: s.unit })}
           >
             <Picker.Column name={"unit"}>
+              <Picker.Item key={"empty"} value={""}>
+                {""}
+              </Picker.Item>
               {units.map((unit) => (
                 <Picker.Item key={unit.id} value={unit.id}>
                   {unit.name}
@@ -142,7 +145,7 @@ export default function ModalInputs({
               // @ts-ignore
               onChange({
                 ...productEditData,
-                expirationDate: d?.toISOString(),
+                expirationDate: d,
               })
             }
           />

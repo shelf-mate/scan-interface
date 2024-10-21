@@ -13,7 +13,7 @@ interface Storage {
   icon: JSX.Element;
 }
 const Home: React.FC = () => {
-  const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
+  const { selectedStorage, setSelectedStorage } = useStorage();
 
   const [inventory, setInventory] = useState<Product[]>([]);
   const [isModalOpen, setModalOpen] = useState<boolean>(true);
