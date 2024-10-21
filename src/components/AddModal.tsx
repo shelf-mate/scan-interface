@@ -50,6 +50,30 @@ export default function AddModal({}: AddModalProps) {
   // TODO: get error messages from Provider / BACKEND
   const handleSave = async () => {
     let valid = true;
+    if (!productData.name || productData.name === "") {
+      valid = false;
+      toast.error("Please enter a name for the product");
+    }
+    if (!productData.categoryId) {
+      valid = false;
+      toast.error("Please select a category for the product");
+    }
+    if (!productData.expirationDate) {
+      valid = false;
+      toast.error("Please select an expiration date for the product");
+    }
+    if (!productData.unitId) {
+      valid = false;
+      toast.error("Please select a unit for the product");
+    }
+    if (!productData.quantity) {
+      valid = false;
+      toast.error("Please select a quantity for the product");
+    }
+    if (!productData.storageId) {
+      valid = false;
+      toast.error("Please select a storage for the product");
+    }
     if (valid) {
       try {
         await saveProductTemplate({

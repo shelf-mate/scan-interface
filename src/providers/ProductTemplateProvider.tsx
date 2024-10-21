@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useEffect,
   useRef,
+  useCallback,
 } from "react";
 import {
   getProductTemplateByEan,
@@ -16,6 +17,8 @@ import {
   ProductTemplateCreateData,
 } from "@shelf-mate/api-client-ts";
 import axios from "axios";
+import { useStorage } from "./StorageProvider";
+import toast from "react-hot-toast";
 
 interface ProductTemplateContextProps {
   currentProductTemplate: ProductTemplate | undefined;
@@ -31,21 +34,23 @@ const ProductTemplateContext = createContext<
 export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const { selectedStorage } = useStorage();
+
   const [productTemplate, setProductTemplate] = useState<
     ProductTemplate | undefined
   >();
 
   const [isNew, setIsNew] = useState<boolean>(true);
   const socket = useRef<WebSocket>();
-  useEffect(() => {
-    socket.current = new WebSocket(
-      process.env.REACT_APP_SCAN_SERVER_URL ?? "http://localhost:8000"
-    );
-
-    // Connection opened
-    socket.current.addEventListener("message", (event) => {
+  const handleWebsocketMessage = useCallback(
+    (event: MessageEvent) => {
       const data = JSON.parse(event.data);
+      console.log(data);
       if (data.command === "scan") {
+        if (!selectedStorage) {
+          toast.error("Please select a storage before scanning a product!");
+          return;
+        }
         getProductTemplateByEan(data.data.ean)
           .then((res) => {
             // @ts-ignore
@@ -66,18 +71,38 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
             console.error(err);
           });
       }
-    });
+    },
+    [selectedStorage, socket]
+  );
+
+  useEffect(() => {
+    console.log("add event listner");
+    console.log(socket.current?.readyState);
+    socket.current?.addEventListener("message", () => console.log("message"));
     return () => {
-      socket.current?.close();
+      socket.current?.removeEventListener("message", handleWebsocketMessage);
     };
-  }, []);
+  }, [handleWebsocketMessage, socket]);
+  useEffect(() => {
+    console.log("create socket");
+    if (!socket.current) {
+      socket.current = new WebSocket(
+        process.env.REACT_APP_SCAN_SERVER_URL ?? "http://localhost:8000"
+      );
+    }
+    socket.current.addEventListener("message", handleWebsocketMessage);
+
+    return () => {
+      socket.current?.removeEventListener("message", handleWebsocketMessage);
+    };
+  }, [handleWebsocketMessage]);
 
   const del = async () => {
     if (!productTemplate) return;
     try {
       await deleteProductTemplate(productTemplate.id).then(() => {
         setProductTemplate(undefined);
-        console.log(socket.current);
+        console.log(socket);
         socket.current?.send(JSON.stringify({ command: "block", data: false }));
       });
     } catch (err) {

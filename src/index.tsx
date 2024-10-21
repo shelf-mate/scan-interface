@@ -18,17 +18,17 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <ProductTemplateProvider>
-      <ProductProvider>
-        <UnitProvider>
-          <CategoryProvider>
-            <StorageProvider>
+    <StorageProvider>
+      <ProductTemplateProvider>
+        <ProductProvider>
+          <UnitProvider>
+            <CategoryProvider>
               <Home />
-            </StorageProvider>
-          </CategoryProvider>
-        </UnitProvider>
-      </ProductProvider>
-    </ProductTemplateProvider>
+            </CategoryProvider>
+          </UnitProvider>
+        </ProductProvider>
+      </ProductTemplateProvider>
+    </StorageProvider>
   </React.StrictMode>
 );
 
