@@ -19,15 +19,15 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <StorageProvider>
-      <ProductTemplateProvider>
-        <ProductProvider>
+      <ProductProvider>
+        <ProductTemplateProvider>
           <UnitProvider>
             <CategoryProvider>
               <Home />
             </CategoryProvider>
           </UnitProvider>
-        </ProductProvider>
-      </ProductTemplateProvider>
+        </ProductTemplateProvider>
+      </ProductProvider>
     </StorageProvider>
   </React.StrictMode>
 );

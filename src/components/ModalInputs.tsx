@@ -10,16 +10,19 @@ import NumberInput from "./NumberInput";
 import Picker from "react-mobile-picker";
 import "react-day-picker/style.css";
 import { useStorage } from "../providers/StorageProvider";
+import { ProductCreateData } from "@shelf-mate/api-client-ts";
 
-export interface AddModalProps {
-  productEditData: ProductEditData;
-  onChange: (data: ProductEditData) => void;
+export interface ModalInputProps<
+  T_ProductData extends Partial<ProductCreateData>
+> {
+  productEditData: T_ProductData;
+  onChange: (data: T_ProductData) => void;
 }
 
-export default function ModalInputs({
+export default function ModalInputs<T extends Partial<ProductCreateData>>({
   productEditData,
   onChange,
-}: AddModalProps) {
+}: ModalInputProps<T>) {
   const { categories } = useCategory();
   const { units } = useUnit();
   const { storages } = useStorage();

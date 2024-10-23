@@ -10,15 +10,17 @@ import React, {
 import {
   getProductTemplateByEan,
   ProductTemplate,
-  createProductTemplate,
-  WithoutDates,
   updateProductTemplate,
   deleteProductTemplate,
   ProductTemplateCreateData,
+  Response,
+  Product,
 } from "@shelf-mate/api-client-ts";
-import axios from "axios";
 import { useStorage } from "./StorageProvider";
 import toast from "react-hot-toast";
+import { useProduct } from "./ProductProvider";
+import { AxiosResponse } from "axios";
+import moment from "moment";
 
 interface ProductTemplateContextProps {
   currentProductTemplate: ProductTemplate | undefined;
@@ -34,13 +36,14 @@ const ProductTemplateContext = createContext<
 export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { selectedStorage } = useStorage();
+  const { selectedStorage, setSelectedStorage } = useStorage();
+  const { createProduct: addProduct, setCurEditProduct } = useProduct();
 
   const [productTemplate, setProductTemplate] = useState<
     ProductTemplate | undefined
   >();
 
-  const [isNew, setIsNew] = useState<boolean>(true);
+  const [isNew, setIsNew] = useState<boolean>(false);
   const socket = useRef<WebSocket>();
   const handleWebsocketMessage = useCallback(
     (event: MessageEvent) => {
@@ -57,6 +60,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
             setIsNew(res.new);
             // @ts-ignore
             setProductTemplate(res.data);
+            setSelectedStorage("28592c7d-b55b-48ea-8deb-912c5c861135");
 
             //@ts-ignore
             console.log(res.new);
@@ -65,6 +69,28 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
               socket.current?.send(
                 JSON.stringify({ command: "block", data: true })
               );
+            } else {
+              addProduct({
+                //@ts-ignore
+                name: res.data.name,
+                //@ts-ignore
+                categoryId: res.data.category.id,
+
+                expirationDate:
+                  //@ts-ignore
+                  res.data.expirationTime !== undefined
+                    ? moment()
+                        //@ts-ignore
+                        .add(res.data.expirationTime + 1, "days")
+                        .toDate()
+                    : new Date(),
+                storageId: selectedStorage,
+                quantity: 1,
+                //@ts-ignore
+                unitId: res.data.unit.id,
+              }).then((prod: Product) => {
+                setCurEditProduct(prod);
+              });
             }
           })
           .catch((err) => {

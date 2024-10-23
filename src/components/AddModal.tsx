@@ -19,7 +19,7 @@ export default function AddModal({}: AddModalProps) {
     delete: deleteProductTemplate,
   } = useProductTemplate();
   const { selectedStorage } = useStorage();
-  const { addProduct: saveProduct } = useProduct();
+  const { createProduct: saveProduct } = useProduct();
   const [productData, setProductData] = useState<ProductEditData>({});
 
   const modalRef = useRef<HTMLDialogElement>(null);

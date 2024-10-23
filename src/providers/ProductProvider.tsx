@@ -1,5 +1,6 @@
 import {
-  createProduct,
+  createProduct as apiCreateProduct,
+  updateProduct as apiUpdateProduct,
   getProducts,
   Product,
   ProductCreateData,
@@ -14,7 +15,10 @@ import React, {
 
 interface ProductContextType {
   products: Product[];
-  addProduct: (product: ProductCreateData) => void;
+  createProduct: (product: ProductCreateData) => Promise<Product>;
+  updateProduct: (id: string, product: Partial<ProductCreateData>) => void;
+  curEditProduct: Product | undefined;
+  setCurEditProduct: (product: Product | undefined) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -23,12 +27,14 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [curEditProduct, setCurEditProduct] = useState<Product | undefined>();
 
-  const addProduct = (product: ProductCreateData) => {
-    createProduct(product).then((res) => {
-      //@ts-ignore
-      setProducts([...products, res.data]);
-    });
+  const createProduct = async (product: ProductCreateData) => {
+    const res = await apiCreateProduct(product);
+    //@ts-ignore
+    setProducts([...products, res.data]);
+    //@ts-ignore
+    return res.data;
   };
 
   useEffect(() => {
@@ -38,8 +44,25 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
     });
   }, []);
 
+  const updateProduct = (id: string, product: Partial<ProductCreateData>) => {
+    apiUpdateProduct(id, product).then((res) => {
+      setProducts(
+        //@ts-ignore
+        products.map((prod) => (prod.id === id ? res.data : prod))
+      );
+    });
+  };
+
   return (
-    <ProductContext.Provider value={{ products, addProduct }}>
+    <ProductContext.Provider
+      value={{
+        products,
+        createProduct: createProduct,
+        curEditProduct,
+        updateProduct,
+        setCurEditProduct: (prod) => setCurEditProduct(prod),
+      }}
+    >
       {children}
     </ProductContext.Provider>
   );
