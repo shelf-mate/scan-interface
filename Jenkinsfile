@@ -12,8 +12,9 @@ pipeline {
             steps {
                 container('kaniko') {
                     sh '''
-                    wget https://github.com/multiarch/qemu-user-static/releases/download/v5.2.0-2/qemu-aarch64-static -O /usr/bin/qemu-aarch64-static
-                    chmod +x /usr/bin/qemu-aarch64-static
+                    mkdir -p /workspace/qemu
+                    wget https://github.com/multiarch/qemu-user-static/releases/download/v5.2.0-2/qemu-aarch64-static -O /workspace/qemu/qemu-aarch64-static
+                    chmod +x /workspace/qemu/qemu-aarch64-static
                     '''
                 }
             }
