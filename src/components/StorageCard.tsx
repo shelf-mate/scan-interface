@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Storage } from "@shelf-mate/api-client-ts";
+import {} from "react-icons/fa";
+import { FaBoxesStacked, FaBoxesPacking } from "react-icons/fa6";
+import { useStorage } from "../providers/StorageProvider";
 
 interface StorageCardProps {
   selected: boolean;
@@ -11,19 +14,38 @@ export default function StorageCard({
   onClick,
   selected,
 }: StorageCardProps): JSX.Element {
+  const { getProducts } = useStorage();
+
+  const [productsCount, setProductsCount] = React.useState<number>(0);
+  useEffect(() => {
+    getProducts(storage.id).then((products) => {
+      setProductsCount(products.length);
+    });
+  }, [getProducts, storage.id]);
+
   return (
-    <div
-      key={storage.id}
-      className={`${
-        selected ? "!bg-gray-400" : "bg-gray-200"
-      } w-full px-6 py-20 rounded-lg flex flex-col items-center cursor-pointer hover:bg-gray-300`}
-      onClick={() => {
-        if (onClick) {
-          onClick(storage);
-        }
-      }}
-    >
-      <h3 className="mt-4 text-xl">{storage.name}</h3>
+    <div className="indicator aspect-square  w-full max-w-[150px] text-slate-800">
+      <span className="indicator-item badge badge-primary -translate-x-1">
+        {productsCount}
+      </span>
+      <div
+        key={storage.id}
+        className={`${
+          selected ? "!bg-gray-400" : "bg-gray-200"
+        } aspect-square  w-full max-w-[150px] rounded-lg flex flex-col items-center cursor-pointer justify-center hover:bg-gray-300`}
+        onClick={() => {
+          if (onClick) {
+            onClick(storage);
+          }
+        }}
+      >
+        {selected ? (
+          <FaBoxesPacking className="text-4xl flex" />
+        ) : (
+          <FaBoxesStacked className="text-4xl flex" />
+        )}
+        <h3 className="flex text-xl">{storage.name}</h3>
+      </div>
     </div>
   );
 }

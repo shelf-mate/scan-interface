@@ -41,9 +41,14 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
 
   const [productTemplate, setProductTemplate] = useState<
     ProductTemplate | undefined
-  >();
+  >({
+    id: "c1ed6edc-dc9b-4b49-8681-c412bb82f58b",
+    name: "Product",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
 
-  const [isNew, setIsNew] = useState<boolean>(false);
+  const [isNew, setIsNew] = useState<boolean>(true);
   const socket = useRef<WebSocket>();
   const handleWebsocketMessage = useCallback(
     (event: MessageEvent) => {
@@ -60,7 +65,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
             setIsNew(res.new);
             // @ts-ignore
             setProductTemplate(res.data);
-            setSelectedStorage("28592c7d-b55b-48ea-8deb-912c5c861135");
+            //setSelectedStorage("28592c7d-b55b-48ea-8deb-912c5c861135");
 
             //@ts-ignore
             console.log(res.new);

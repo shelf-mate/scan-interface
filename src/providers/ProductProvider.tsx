@@ -1,9 +1,11 @@
 import {
   createProduct as apiCreateProduct,
   updateProduct as apiUpdateProduct,
+  deleteProduct as apiDeleteProduct,
   getProducts,
   Product,
   ProductCreateData,
+  deleteProduct,
 } from "@shelf-mate/api-client-ts";
 import React, {
   createContext,
@@ -17,6 +19,7 @@ interface ProductContextType {
   products: Product[];
   createProduct: (product: ProductCreateData) => Promise<Product>;
   updateProduct: (id: string, product: Partial<ProductCreateData>) => void;
+  deleteProduct: (id: string) => void;
   curEditProduct: Product | undefined;
   setCurEditProduct: (product: Product | undefined) => void;
 }
@@ -53,6 +56,15 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
+  const deleteProduct = (id: string) => {
+    apiDeleteProduct(id).then(() => {
+      setProducts(
+        //@ts-ignore
+        products.filter((prod) => prod.id !== id)
+      );
+    });
+  };
+
   return (
     <ProductContext.Provider
       value={{
@@ -60,6 +72,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
         createProduct: createProduct,
         curEditProduct,
         updateProduct,
+        deleteProduct,
         setCurEditProduct: (prod) => setCurEditProduct(prod),
       }}
     >
