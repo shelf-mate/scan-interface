@@ -79,9 +79,9 @@ export default function EditModal({}: EditModalProps) {
       <Toaster position="top-right" />
       <div className=" modal-box p-4 max-h-[calc(100vh-1em)] max-w-[calc(100vw-1em)] h-full  bg-gray-200 flex justify-center items-center flex-col">
         <div className="text-center">
-          <h2 className="font-bold text-md">Product added!</h2>
+          <h2 className="font-bold text-md">Edit Product Data</h2>
           <p className="text-gray-700">
-            You can edit it now if the data is incorrect.
+            Edit the product data if it is incorrect.
           </p>
         </div>
         <div className="flex-1 w-full h-[80%]">

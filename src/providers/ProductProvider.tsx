@@ -30,7 +30,9 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [curEditProduct, setCurEditProduct] = useState<Product | undefined>();
+  const [curEditProduct, setCurEditProduct] = useState<Product | undefined>(
+    undefined
+  );
 
   const createProduct = async (product: ProductCreateData) => {
     const res = await apiCreateProduct(product);
@@ -73,7 +75,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
         curEditProduct,
         updateProduct,
         deleteProduct,
-        setCurEditProduct: (prod) => setCurEditProduct(prod),
+        setCurEditProduct,
       }}
     >
       {children}

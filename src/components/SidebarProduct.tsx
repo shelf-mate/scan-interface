@@ -1,6 +1,7 @@
 import { Product } from "@shelf-mate/api-client-ts";
 import React from "react";
 import { useProduct } from "../providers/ProductProvider";
+import { FaPen, FaTrash } from "react-icons/fa6";
 
 interface ProductItemTemplateProps {
   product: Product;
@@ -9,23 +10,33 @@ interface ProductItemTemplateProps {
 const SidebarProduct: React.FC<ProductItemTemplateProps> = ({ product }) => {
   const { setCurEditProduct, deleteProduct } = useProduct();
   return (
-    <li className="flex justify-between items-center border-b py-4">
-      <div>
-        <h3 className="font-semibold">{product.name}</h3>
+    <li className="flex gap-1 justify-between items-center border-b py-4 px-2 max-w-full">
+      <div className="flex-col overflow-hidden">
+        <h3 className="font-semibold text-ellipsis overflow-hidden">
+          {product.name}
+        </h3>
+        <p>
+          <span className="text-sm text-gray-500">
+            {product.storage.name} •&nbsp;
+          </span>
+          <span className="text-sm text-gray-500">{product.category.name}</span>
+        </p>
       </div>
       <div className="flex items-center space-x-4">
         <button
-          className="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded"
-          onClick={() => setCurEditProduct(product)}
+          className="bg-warning  text-white font-bold py-2 px-4 rounded"
+          onClick={() => {
+            setCurEditProduct(product);
+          }}
         >
-          Edit
+          <FaPen />
         </button>
 
         <button
-          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+          className="bg-error text-white font-bold py-2 px-4 rounded"
           onClick={() => deleteProduct(product.id)}
         >
-          Remove
+          <FaTrash />
         </button>
       </div>
     </li>

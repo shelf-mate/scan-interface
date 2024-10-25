@@ -25,7 +25,13 @@ export default function StorageCard({
 
   return (
     <div className="indicator aspect-square  w-full max-w-[150px] text-slate-800">
-      <span className="indicator-item badge badge-primary -translate-x-1">
+      <span
+        className={`indicator-item badge badge-primary -translate-x-1 ${
+          selected
+            ? "bg-blue-950 border-blue-950"
+            : "bg-blue-700 border-blue-700"
+        }`}
+      >
         {productsCount}
       </span>
       <div

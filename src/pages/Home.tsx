@@ -6,6 +6,7 @@ import { useProduct } from "../providers/ProductProvider";
 import { Product } from "@shelf-mate/api-client-ts";
 import StorageCard from "../components/StorageCard";
 import { Toaster } from "react-hot-toast";
+const _ = require("lodash");
 
 interface Storage {
   id: number;
@@ -34,11 +35,12 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex justify-between  bg-white text-black h-screen">
-      <div className="w-3/5 p-4">
+      <div className="w-3/5 p-4 flex flex-col">
         <h1 className="text-5xl font-bold pb-8">Storage</h1>
-        <div className="grid grid-cols-3 gap-6 justify-items-start h-full">
+        <div className="grid flex-1 grid-cols-3 p-3 gap-6 justify-items-start overflow-y-auto">
           {storages.map((storage) => (
             <StorageCard
+              key={storage.id}
               onClick={(s) => handleStorageSelect(s.id)}
               selected={storage.id === selectedStorage}
               storage={storage}
@@ -46,33 +48,18 @@ const Home: React.FC = () => {
           ))}
         </div>
       </div>
-      <div className="w-2/5 p-4 bg-gray-100">b</div>
-      {/* <div className="w-3/5 p-8">
-        <h1 className="text-5xl font-bold pb-8">Storage</h1>
-        <div className="grid grid-cols-2 gap-6">
-          {storages.map((storage) => (
-            <StorageCard
-              onClick={(s) => handleStorageSelect(s.id)}
-              selected={storage.id === selectedStorage}
-              storage={storage}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="w-2/5 bg-gray-100 p-0 rounded-lg h-[800px]">
-        <h2 className="text-3xl font-bold mb-4 p-8 text-center">
+      <div className="w-2/5 p-4 flex flex-col bg-gray-100">
+        <h2 className="text-3xl font-bold mb-4 p-4 text-center">
           Recently Added
         </h2>
-        <ul className="space-y-4 px-6 overflow-y-scroll">
-          {products.map((product) => (
+        <ul className="space-y-4 overflow-y-auto flex-1 w-full">
+          {_.orderBy(products, "updatedAt", "desc").map((product: Product) => (
             <SidebarProduct key={product.id} product={product} />
           ))}
         </ul>
       </div>
-
       <Modal />
-      <Toaster position="top-right" /> */}
+      <Toaster position="top-right" />
     </div>
   );
 };
