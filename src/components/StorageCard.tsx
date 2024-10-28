@@ -38,7 +38,7 @@ export default function StorageCard({
         key={storage.id}
         className={`${
           selected ? "!bg-gray-400" : "bg-gray-200"
-        } aspect-square  w-full max-w-[150px] rounded-lg flex flex-col items-center cursor-pointer justify-center hover:bg-gray-300`}
+        } aspect-square  w-full max-w-[150px] rounded-lg flex flex-col items-center cursor-pointer justify-center hover:bg-gray-300 overflow-hidden text-ellipsis`}
         onClick={() => {
           if (onClick) {
             onClick(storage);
@@ -50,7 +50,9 @@ export default function StorageCard({
         ) : (
           <FaBoxesStacked className="text-4xl flex" />
         )}
-        <h3 className="flex text-xl">{storage.name}</h3>
+        <h3 className="flex text-xl text-center text-ellipsis overflow-hidden">
+          {storage.name}
+        </h3>
       </div>
     </div>
   );

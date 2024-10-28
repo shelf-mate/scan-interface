@@ -15,11 +15,9 @@ const SidebarProduct: React.FC<ProductItemTemplateProps> = ({ product }) => {
         <h3 className="font-semibold text-ellipsis overflow-hidden">
           {product.name}
         </h3>
-        <p>
-          <span className="text-sm text-gray-500">
-            {product.storage.name} •&nbsp;
-          </span>
-          <span className="text-sm text-gray-500">{product.category.name}</span>
+        <p className="text-ellipsis overflow-hidden text-gray-500">
+          <span className="text-sm">{product.storage.name} •&nbsp;</span>
+          <span className="text-sm ">{product.category.name}</span>
         </p>
       </div>
       <div className="flex items-center space-x-4">

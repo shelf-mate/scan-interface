@@ -29,7 +29,7 @@ const prodToProdCreateData = (prod: Product): ProductCreateData => {
 };
 export default function EditModal({}: EditModalProps) {
   const {
-    createProduct: saveProduct,
+    updateProduct: saveProduct,
     curEditProduct,
     setCurEditProduct,
   } = useProduct();
@@ -61,7 +61,7 @@ export default function EditModal({}: EditModalProps) {
       if (!curEditProduct) {
         throw new Error("No product to edit");
       }
-      await saveProduct(productData as ProductCreateData);
+      await saveProduct(curEditProduct.id, productData as ProductCreateData);
       modalRef.current?.close();
     } catch (err) {}
   };
