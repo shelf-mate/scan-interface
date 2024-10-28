@@ -43,12 +43,11 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
     ProductTemplate | undefined
   >();
 
-  const [isNew, setIsNew] = useState<boolean>(false);
+  const [isNew, setIsNew] = useState<boolean>(true);
   const socket = useRef<WebSocket>();
   const handleWebsocketMessage = useCallback(
     (event: MessageEvent) => {
       const data = JSON.parse(event.data);
-      console.log(data);
       if (data.command === "scan") {
         if (!selectedStorage) {
           toast.error("Please select a storage before scanning a product!");
@@ -60,10 +59,9 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
             setIsNew(res.new);
             // @ts-ignore
             setProductTemplate(res.data);
-            setSelectedStorage("28592c7d-b55b-48ea-8deb-912c5c861135");
+            //setSelectedStorage("28592c7d-b55b-48ea-8deb-912c5c861135");
 
             //@ts-ignore
-            console.log(res.new);
             //@ts-ignore
             if (res.new) {
               socket.current?.send(
@@ -102,15 +100,6 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   useEffect(() => {
-    console.log("add event listner");
-    console.log(socket.current?.readyState);
-    socket.current?.addEventListener("message", () => console.log("message"));
-    return () => {
-      socket.current?.removeEventListener("message", handleWebsocketMessage);
-    };
-  }, [handleWebsocketMessage, socket]);
-  useEffect(() => {
-    console.log("create socket");
     if (!socket.current) {
       socket.current = new WebSocket(
         process.env.REACT_APP_SCAN_SERVER_URL ?? "http://localhost:8000"
@@ -128,7 +117,6 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
     try {
       await deleteProductTemplate(productTemplate.id).then(() => {
         setProductTemplate(undefined);
-        console.log(socket);
         socket.current?.send(JSON.stringify({ command: "block", data: false }));
       });
     } catch (err) {

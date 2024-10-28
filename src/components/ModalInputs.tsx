@@ -54,6 +54,7 @@ export default function ModalInputs<T extends Partial<ProductCreateData>>({
           <div className="flex-1 join join-vertical overflow-y-scroll">
             {categories.map((category) => (
               <input
+                key={category.id}
                 checked={productEditData.categoryId === category.id}
                 onChange={(e) => {
                   onChange({ ...productEditData, categoryId: category.id });
@@ -73,6 +74,7 @@ export default function ModalInputs<T extends Partial<ProductCreateData>>({
           <div className="flex-1 join join-vertical overflow-y-scroll">
             {storages.map((storage) => (
               <input
+                key={storage.id}
                 checked={productEditData.storageId === storage.id}
                 onChange={(e) => {
                   onChange({ ...productEditData, storageId: storage.id });

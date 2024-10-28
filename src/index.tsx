@@ -18,8 +18,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <StorageProvider>
-      <ProductProvider>
+    <ProductProvider>
+      <StorageProvider>
         <ProductTemplateProvider>
           <UnitProvider>
             <CategoryProvider>
@@ -27,8 +27,8 @@ root.render(
             </CategoryProvider>
           </UnitProvider>
         </ProductTemplateProvider>
-      </ProductProvider>
-    </StorageProvider>
+      </StorageProvider>
+    </ProductProvider>
   </React.StrictMode>
 );
 
