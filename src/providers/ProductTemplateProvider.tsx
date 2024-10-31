@@ -38,6 +38,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const { selectedStorage, setSelectedStorage } = useStorage();
   const { createProduct: addProduct, setCurEditProduct } = useProduct();
+  const [scanBlocked, setScanBlocked] = useState<boolean>(false);
 
   const [productTemplate, setProductTemplate] = useState<
     ProductTemplate | undefined
@@ -53,6 +54,10 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
           toast.error("Please select a storage before scanning a product!");
           return;
         }
+        if (scanBlocked) {
+          toast.error("Please save or delete the current product first!");
+          return;
+        }
         getProductTemplateByEan(data.data.ean)
           .then((res) => {
             // @ts-ignore
@@ -64,9 +69,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
             //@ts-ignore
             //@ts-ignore
             if (res.new) {
-              socket.current?.send(
-                JSON.stringify({ command: "block", data: true })
-              );
+              setScanBlocked(true);
             } else {
               addProduct({
                 //@ts-ignore
@@ -96,7 +99,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
           });
       }
     },
-    [selectedStorage, socket]
+    [selectedStorage, socket, scanBlocked]
   );
 
   useEffect(() => {
@@ -117,7 +120,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
     try {
       await deleteProductTemplate(productTemplate.id).then(() => {
         setProductTemplate(undefined);
-        socket.current?.send(JSON.stringify({ command: "block", data: false }));
+        setScanBlocked(false);
       });
     } catch (err) {
       console.error(err);
@@ -130,7 +133,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
       updateProductTemplate(productTemplate.id, data).then((res) => {
         // @ts-ignore
         setProductTemplate(undefined);
-        socket.current?.send(JSON.stringify({ command: "block", data: false }));
+        setScanBlocked(false);
       });
     } catch (err) {
       console.error(err);
