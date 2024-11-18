@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ModalInputs from "./ModalInputs";
 import { useProductTemplate } from "../providers/ProductTemplateProvider";
-import { Product, ProductCreateData } from "@shelf-mate/api-client-ts";
+import { ProductCreateData } from "@shelf-mate/api-client-ts";
 import { useProduct } from "../providers/ProductProvider";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
@@ -32,8 +32,8 @@ export default function AddModal({}: AddModalProps) {
         name: currentProductTemplate?.name ?? "",
         categoryId: currentProductTemplate?.category?.id,
         expirationDate: currentProductTemplate?.expirationTime
-          ? moment().add(currentProductTemplate.expirationTime, "days").toDate()
-          : new Date(),
+            ? moment().add(currentProductTemplate.expirationTime, "days").toDate()
+            : new Date(),
         storageId: selectedStorage,
       });
     } else {
@@ -47,9 +47,9 @@ export default function AddModal({}: AddModalProps) {
     modalRef.current?.close();
   };
 
-  // TODO: get error messages from Provider / BACKEND
   const handleSave = async () => {
     let valid = true;
+
     if (!productData.name || productData.name === "") {
       valid = false;
       toast.error("Please enter a name for the product");
@@ -74,83 +74,98 @@ export default function AddModal({}: AddModalProps) {
       valid = false;
       toast.error("Please select a storage for the product");
     }
+
     if (valid) {
       try {
         await saveProductTemplate({
           categoryId: productData.categoryId as string,
           expirationTime: moment(productData.expirationDate).diff(
-            moment(),
-            "days"
+              moment(),
+              "days"
           ),
           name: productData.name as string,
           unitId: productData.unitId as string,
         });
         await saveProduct(productData as ProductCreateData);
+        toast.success("Product successfully saved!");
         modalRef.current?.close();
-      } catch (err) {}
+      } catch (err) {
+        console.error("Error saving product:", err);
+        toast.error("Failed to save the product. Please try again.");
+      }
     }
   };
 
   return (
-    <dialog
-      id="add_modal"
-      className="modal"
-      ref={modalRef}
-      onCancel={(e) => {
-        confirmRef.current?.showModal();
-        e.preventDefault();
-      }}
-    >
       <dialog
-        className="modal"
-        ref={confirmRef}
-        onCancel={(e) => {
-          handleDelete();
-          e.preventDefault();
-        }}
+          id="add_modal"
+          className="modal"
+          ref={modalRef}
+          onCancel={(e) => {
+            confirmRef.current?.showModal();
+            e.preventDefault();
+          }}
       >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Hello!</h3>
-          <p className="py-4">
-            The product won't be saved! Are you sure you want to exit?
-          </p>
-          <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn mr-2">Back</button>
-              <button onClick={handleDelete} className="btn btn-error">
+        <dialog
+            className="modal"
+            ref={confirmRef}
+            onCancel={(e) => {
+              handleDelete();
+              e.preventDefault();
+            }}
+        >
+          <div className="modal-box rounded-xl shadow-lg p-6 bg-white">
+            <h3 className="font-bold text-lg text-gray-800">Confirmation</h3>
+            <p className="py-4 text-gray-600">
+              The product won't be saved! Are you sure you want to exit?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                  className="px-4 py-2 text-sm font-medium bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                  onClick={() => confirmRef.current?.close()}
+              >
+                Back
+              </button>
+              <button
+                  className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                  onClick={handleDelete}
+              >
                 Delete
               </button>
-            </form>
+            </div>
+          </div>
+        </dialog>
+        <Toaster position="top-center" />
+        <div className="modal-box p-6 max-h-[calc(100vh-2em)] max-w-[calc(100vw-2em)] h-full bg-white rounded-xl shadow-lg flex justify-center items-center flex-col overflow-hidden">
+          <div className="text-center">
+            <h2 className="font-bold text-lg text-gray-800">New Product</h2>
+            <p className="text-gray-600 text-sm">
+              Fill in the details to add a new product.
+            </p>
+          </div>
+          <div className="flex-1 w-full mt-4">
+            <ModalInputs
+                productEditData={productData}
+                onChange={setProductData}
+                onSave={handleSave}
+                onCancel={() => confirmRef.current?.showModal()}
+            />
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+                className="px-4 py-2 text-sm font-medium bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                onClick={() => confirmRef.current?.showModal()}
+            >
+              Close
+            </button>
+            <button
+                className="px-4 py-2 text-sm font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                onClick={handleSave}
+            >
+              Save
+            </button>
           </div>
         </div>
       </dialog>
-      <Toaster position="top-right" />
-      <div className=" modal-box p-4 max-h-[calc(100vh-1em)] max-w-[calc(100vw-1em)] h-full  bg-gray-200 flex justify-center items-center flex-col">
-        <div className="text-center">
-          <h2 className="font-bold text-md">New Product!</h2>
-          <p className="text-gray-700">
-            You can't scan a new product until you confirmed the data!
-          </p>
-        </div>
-        <div className="flex-1 w-full h-[80%]">
-          <ModalInputs
-            productEditData={productData}
-            onChange={setProductData}
-          />
-        </div>
-        <div className="h-[10%] flex">
-          <button
-            className="btn btn-md btn-error flex mr-2"
-            onClick={() => confirmRef.current?.showModal()}
-          >
-            Abort
-          </button>
-          <button className="btn btn-md btn-success flex" onClick={handleSave}>
-            Save
-          </button>
-        </div>
-      </div>
-    </dialog>
   );
 }

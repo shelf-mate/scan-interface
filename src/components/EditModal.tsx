@@ -10,7 +10,6 @@ import {
 import { useProduct } from "../providers/ProductProvider";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
-import { useStorage } from "../providers/StorageProvider";
 
 interface EditModalProps {}
 
@@ -27,6 +26,7 @@ const prodToProdCreateData = (prod: Product): ProductCreateData => {
     unitId: prod.unit.id,
   };
 };
+
 export default function EditModal({}: EditModalProps) {
   const {
     updateProduct: saveProduct,
@@ -34,7 +34,7 @@ export default function EditModal({}: EditModalProps) {
     setCurEditProduct,
   } = useProduct();
   const [productData, setProductData] = useState<Partial<ProductEditData>>(
-    curEditProduct ?? {}
+      curEditProduct ?? {}
   );
 
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -54,51 +54,62 @@ export default function EditModal({}: EditModalProps) {
     modalRef.current?.close();
   };
 
-  // TODO: get error messages from Provider / BACKEND
-  // QUESTION: Should we also update the productTemplate when the users edits a product
   const handleSave = async () => {
     try {
       if (!curEditProduct) {
-        throw new Error("No product to edit");
+        throw new Error("Kein Produkt zum Bearbeiten vorhanden");
       }
+      console.log("Speichere Daten:", productData);
       await saveProduct(curEditProduct.id, productData as ProductCreateData);
+      toast.success("Product saved!");
       modalRef.current?.close();
-    } catch (err) {}
+    } catch (err) {
+      console.error("Fehler beim Speichern:", err);
+      toast.error("Speichern fehlgeschlagen. Bitte versuche es erneut.");
+    }
   };
 
   return (
-    <dialog
-      id="edit_modal"
-      className="modal"
-      ref={modalRef}
-      onCancel={(e) => {
-        confirmRef.current?.showModal();
-        e.preventDefault();
-      }}
-    >
-      <Toaster position="top-right" />
-      <div className=" modal-box p-4 max-h-[calc(100vh-1em)] max-w-[calc(100vw-1em)] h-full  bg-gray-200 flex justify-center items-center flex-col">
-        <div className="text-center">
-          <h2 className="font-bold text-md">Edit Product Data</h2>
-          <p className="text-gray-700">
-            Edit the product data if it is incorrect.
-          </p>
+      <dialog
+          id="edit_modal"
+          className="modal"
+          ref={modalRef}
+          onCancel={(e) => {
+            confirmRef.current?.showModal();
+            e.preventDefault();
+          }}
+      >
+        <Toaster position="top-center" />
+        <div className="modal-box p-6 max-h-[calc(100vh-2em)] max-w-[calc(100vw-2em)] h-full bg-gray-100 rounded-xl shadow-lg flex justify-center items-center flex-col overflow-hidden">
+          <div className="text-center">
+            <h2 className="font-bold text-lg text-gray-800">Edit Product Data</h2>
+            <p className="text-gray-600 text-sm">
+              Make changes to the product details if necessary.
+            </p>
+          </div>
+          <div className="flex-1 w-full mt-4">
+            <ModalInputs
+                productEditData={productData}
+                onChange={setProductData}
+                onSave={handleSave}
+                onCancel={handleClose}
+            />
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+                className="px-40 py-4 text-sm font-medium bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                onClick={handleClose}
+            >
+              Close
+            </button>
+            <button
+                className="px-40 py-4 text-sm font-medium bg-primaryColor text-white rounded-lg hover:bg-blue-600 transition"
+                onClick={handleSave}
+            >
+              Save
+            </button>
+          </div>
         </div>
-        <div className="flex-1 w-full h-[80%]">
-          <ModalInputs
-            productEditData={productData}
-            onChange={setProductData}
-          />
-        </div>
-        <div className="h-[10%] flex">
-          <button className="btn btn-md flex mr-2" onClick={handleClose}>
-            Close
-          </button>
-          <button className="btn btn-md btn-success flex" onClick={handleSave}>
-            Save
-          </button>
-        </div>
-      </div>
-    </dialog>
+      </dialog>
   );
 }

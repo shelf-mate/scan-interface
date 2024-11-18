@@ -1,211 +1,204 @@
-import React from "react";
-import { ProductEditData } from "./AddModal";
+import React, { useState } from "react";
 import { useCategory } from "../providers/CategoryProvider";
-import { DatePicker } from "@mantine/dates";
-import { useProductTemplate } from "../providers/ProductTemplateProvider";
-import moment from "moment";
 import { DayPicker } from "react-day-picker";
 import { useUnit } from "../providers/UnitProvider";
-import NumberInput from "./NumberInput";
-import Picker from "react-mobile-picker";
 import "react-day-picker/style.css";
 import { useStorage } from "../providers/StorageProvider";
 import { ProductCreateData } from "@shelf-mate/api-client-ts";
+import moment from "moment";
 
 export interface ModalInputProps<
-  T_ProductData extends Partial<ProductCreateData>
+    T_ProductData extends Partial<ProductCreateData>
 > {
-  productEditData: T_ProductData;
-  onChange: (data: T_ProductData) => void;
+    productEditData: T_ProductData;
+    onChange: (data: T_ProductData) => void;
+    onSave: () => void;
+    onCancel: () => void;
 }
 
 export default function ModalInputs<T extends Partial<ProductCreateData>>({
-  productEditData,
-  onChange,
-}: ModalInputProps<T>) {
-  const { categories } = useCategory();
-  const { units } = useUnit();
-  const { storages } = useStorage();
-  return (
-    <>
-      <div className="">
-        <h1 className="mt-4 mb-1 text-md bold text-slate-600">Name</h1>
-        <input
-          type="name"
-          id="name"
-          onChange={(e) =>
-            onChange({ ...productEditData, name: e.target.value })
-          }
-          value={productEditData.name}
-          className={`input input-sm ${
-            productEditData.name && productEditData.name !== ""
-              ? "input-primary"
-              : "input-error"
-          } w-full max-w-xs`}
-          placeholder="Enter the name..."
-          required
-        />
-      </div>
-      <div className="flex max-h-[80%] mt-2 justify-between w-full">
-        <div className="flex flex-col">
-          <div>
-            <h1 className=" text-md mb-1  bold text-slate-600">Category</h1>
-          </div>
-          <div className="flex-1 join join-vertical overflow-y-scroll">
-            {categories.map((category) => (
-              <input
-                key={category.id}
-                checked={productEditData.categoryId === category.id}
-                onChange={(e) => {
-                  onChange({ ...productEditData, categoryId: category.id });
-                }}
-                className="join-item btn btn-sm max-w-32"
-                type="radio"
-                name="category"
-                aria-label={category.name}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <div>
-            <h1 className=" text-md mb-1  bold text-slate-600">Storage</h1>
-          </div>
-          <div className="flex-1 join join-vertical overflow-y-scroll">
-            {storages.map((storage) => (
-              <input
-                key={storage.id}
-                checked={productEditData.storageId === storage.id}
-                onChange={(e) => {
-                  onChange({ ...productEditData, storageId: storage.id });
-                }}
-                className="join-item btn btn-sm max-w-32"
-                type="radio"
-                name="storage"
-                aria-label={storage.name}
-              />
-            ))}
-          </div>
-        </div>
+                                                                              productEditData,
+                                                                              onChange,
+                                                                              onSave,
+                                                                              onCancel,
+                                                                          }: ModalInputProps<T>) {
+    const { categories = [] } = useCategory();
+    const { units = [] } = useUnit();
+    const { storages = [] } = useStorage();
 
-        <div>
-          <h1 className=" mb-1 text-md text-slate-600">Quantity</h1>
-          <NumberInput
-            number={productEditData.quantity ?? 0}
-            onChange={(n) => onChange({ ...productEditData, quantity: n })}
-            unitString={
-              units.find((u) => u.id === productEditData.unitId)?.name
-            }
-          />
-        </div>
-        <div className="overflow-hidden">
-          <Picker
-            className=" -translate-y-16"
-            value={{ unit: productEditData.unitId ?? "" }}
-            onChange={(s) => onChange({ ...productEditData, unitId: s.unit })}
-          >
-            <Picker.Column name={"unit"}>
-              <Picker.Item key={"empty"} value={""}>
-                {""}
-              </Picker.Item>
-              {units.map((unit) => (
-                <Picker.Item key={unit.id} value={unit.id}>
-                  {unit.name}
-                </Picker.Item>
-              ))}
-            </Picker.Column>
-          </Picker>
-          {/* <h1 className="mt-10 text-md text-slate-600">Unit</h1>
-          <div className="join join-vertical flex mx-auto">
-            {units.map((unit) => (
-              <input
-                checked={productEditData.unitId === unit.id}
-                onChange={(e) => {
-                  onChange({ ...productEditData, unitId: unit.id });
-                }}
-                className="join-item btn btn-sm max-w-30"
-                type="radio"
-                name="unit"
-                aria-label={unit.name}
-              />
-            ))}
-          </div> */}
-        </div>
-        <div>
-          {" "}
-          <h1 className="mt-4 mb-1 text-md text-slate-600">Expiration Date</h1>
-          <DayPicker
-            mode="single"
-            selected={
-              productEditData.expirationDate
-                ? moment(productEditData.expirationDate).toDate()
-                : new Date()
-            }
-            className="text-xs"
-            classNames={{
-              day: "!w-8 !h-8",
-              day_button: "!w-8 !h-8",
-            }}
-            onSelect={(d) =>
-              // @ts-ignore
-              onChange({
-                ...productEditData,
-                expirationDate: d,
-              })
-            }
-          />
-        </div>
-      </div>
+    const [showPickerModal, setShowPickerModal] = useState(false);
+    const [pickerTitle, setPickerTitle] = useState<string>("");
+    const [pickerItems, setPickerItems] = useState<{ id: string; name: string }[]>([]);
+    const [selectedField, setSelectedField] = useState<keyof T | "">("");
+    const [showCalendarModal, setShowCalendarModal] = useState(false);
 
-      {/*  <div className="h-full flex flex-row">
-        <div className="flex flex-col">
-          <h1 className="mt-4 mb-1 text-xl bold text-slate-600">Category</h1>
-          <div className="join join-vertical mr-8 h-1/2 overflow-scroll">
-            {categories.map((category) => (
-              <input
-                checked={productEditData.categoryId === category.id}
-                onChange={(e) => {
-                  onChange({ ...productEditData, categoryId: category.id });
-                }}
-                className="join-item btn btn-lg w-60"
-                type="radio"
-                name="category"
-                aria-label={category.name}
-              />
-            ))}
-          </div>
+    const openPicker = (
+        title: string,
+        items: { id: string; name: string }[],
+        field: keyof T
+    ) => {
+        setPickerTitle(title);
+        setPickerItems(items);
+        setSelectedField(field);
+        setShowPickerModal(true);
+    };
+
+    const handleItemSelect = (id: string) => {
+        if (selectedField) {
+            onChange({ ...productEditData, [selectedField]: id });
+        }
+        setShowPickerModal(false);
+    };
+
+    return (
+        <div className="flex flex-col h-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow overflow-auto p-4">
+                {/* Name Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Name</h1>
+                    <input
+                        type="text"
+                        id="name"
+                        value={productEditData.name || ""}
+                        onChange={(e) => onChange({ ...productEditData, name: e.target.value })}
+                        className="input input-md w-full border rounded-md p-2"
+                        placeholder="Enter the name..."
+                    />
+                </div>
+
+                {/* Category Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Category</h1>
+                    <input
+                        type="text"
+                        readOnly
+                        value={
+                            categories.find((c) => c.id === productEditData.categoryId)?.name ||
+                            "Select a category"
+                        }
+                        onClick={() => openPicker("Select Category", categories, "categoryId")}
+                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
+                    />
+                </div>
+
+                {/* Storage Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Storage</h1>
+                    <input
+                        type="text"
+                        readOnly
+                        value={
+                            storages.find((s) => s.id === productEditData.storageId)?.name ||
+                            "Select a storage"
+                        }
+                        onClick={() => openPicker("Select Storage", storages, "storageId")}
+                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
+                    />
+                </div>
+
+                {/* Unit Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Unit</h1>
+                    <input
+                        type="text"
+                        readOnly
+                        value={
+                            units.find((u) => u.id === productEditData.unitId)?.name ||
+                            "Select a unit"
+                        }
+                        onClick={() => openPicker("Select Unit", units, "unitId")}
+                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
+                    />
+                </div>
+
+                {/* Quantity Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Quantity</h1>
+                    <input
+                        type="number"
+                        value={productEditData.quantity || 0}
+                        onChange={(e) =>
+                            onChange({ ...productEditData, quantity: Number(e.target.value) })
+                        }
+                        className="input input-md w-full border rounded-md p-2"
+                    />
+                </div>
+
+                {/* Expiration Date Picker */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">
+                        Expiration Date
+                    </h1>
+                    <input
+                        type="text"
+                        readOnly
+                        value={
+                            productEditData.expirationDate
+                                ? moment(productEditData.expirationDate).format("YYYY-MM-DD")
+                                : "Select expiration date"
+                        }
+                        onClick={() => setShowCalendarModal(true)}
+                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
+                    />
+                </div>
+            </div>
+
+            {/* Picker Modal */}
+            {showPickerModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-xs w-full text-center">
+                        <h2 className="text-lg font-semibold mb-4">{pickerTitle}</h2>
+                        <div className="h-48 overflow-y-scroll">
+                            {pickerItems.map((item) => (
+                                <div
+                                    key={item.id}
+                                    onClick={() => handleItemSelect(item.id)}
+                                    className="p-2 cursor-pointer hover:bg-gray-200"
+                                >
+                                    {item.name}
+                                </div>
+                            ))}
+                        </div>
+                        <button
+                            onClick={() => setShowPickerModal(false)}
+                            className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
+            {showCalendarModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-xs sm:max-w-sm w-full text-center">
+                        <h2 className="text-lg font-semibold mb-4">Select Expiration Date</h2>
+                        <div className="overflow-hidden">
+                            <DayPicker
+                                mode="single"
+                                selected={
+                                    productEditData.expirationDate
+                                        ? moment(productEditData.expirationDate).toDate()
+                                        : undefined
+                                }
+                                onSelect={(date) => {
+                                    onChange({
+                                        ...productEditData,
+                                        expirationDate: date || undefined,
+                                    });
+                                    setShowCalendarModal(false);
+                                }}
+                                className="w-full"
+                            />
+                        </div>
+                        <button
+                            onClick={() => setShowCalendarModal(false)}
+                            className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
-        <div>
-          <h1 className="mt-4 mb-1 text-xl bold text-slate-600">Quantity</h1>
-          <NumberInput
-            number={productEditData.quantity ?? 0}
-            onChange={(n) => onChange({ ...productEditData, quantity: n })}
-            unitString={
-              units.find((u) => u.id === productEditData.unitId)?.name
-            }
-          />
-          <h1 className="mt-4 mb-1 text-lg bold text-slate-600">Unit</h1>
-          <div className="join join-vertical flex mr-8">
-            {units.map((unit) => (
-              <input
-                checked={productEditData.unitId === unit.id}
-                onChange={(e) => {
-                  onChange({ ...productEditData, unitId: unit.id });
-                }}
-                className="join-item btn btn-lg w-60"
-                type="radio"
-                name="unit"
-                aria-label={unit.name}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="">
-          <div>
-           
-          </div>
-        </div>
-      </div> */}
-    </>
-  );
+    );
 }
