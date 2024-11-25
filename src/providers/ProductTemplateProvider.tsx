@@ -49,6 +49,12 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
   const handleWebsocketMessage = useCallback(
     (event: MessageEvent) => {
       const data = JSON.parse(event.data);
+      if (data.command === "error") {
+        if (data.data.message) {
+          toast.error(data.data);
+        }
+        return;
+      }
       if (data.command === "scan") {
         if (!selectedStorage) {
           toast.error("Please select a storage before scanning a product!");
