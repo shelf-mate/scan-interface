@@ -52,7 +52,7 @@ export default function ModalInputs<T extends Partial<ProductCreateData>>({
 
     return (
         <div className="flex flex-col h-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow overflow-auto p-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow overflow-auto p-1">
                 {/* Name Input */}
                 <div>
                     <h1 className="text-md font-semibold text-slate-600 mb-1">Name</h1>
@@ -65,65 +65,6 @@ export default function ModalInputs<T extends Partial<ProductCreateData>>({
                         placeholder="Enter the name..."
                     />
                 </div>
-
-                {/* Category Input */}
-                <div>
-                    <h1 className="text-md font-semibold text-slate-600 mb-1">Category</h1>
-                    <input
-                        type="text"
-                        readOnly
-                        value={
-                            categories.find((c) => c.id === productEditData.categoryId)?.name ||
-                            "Select a category"
-                        }
-                        onClick={() => openPicker("Select Category", categories, "categoryId")}
-                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
-                    />
-                </div>
-
-                {/* Storage Input */}
-                <div>
-                    <h1 className="text-md font-semibold text-slate-600 mb-1">Storage</h1>
-                    <input
-                        type="text"
-                        readOnly
-                        value={
-                            storages.find((s) => s.id === productEditData.storageId)?.name ||
-                            "Select a storage"
-                        }
-                        onClick={() => openPicker("Select Storage", storages, "storageId")}
-                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
-                    />
-                </div>
-
-                {/* Unit Input */}
-                <div>
-                    <h1 className="text-md font-semibold text-slate-600 mb-1">Unit</h1>
-                    <input
-                        type="text"
-                        readOnly
-                        value={
-                            units.find((u) => u.id === productEditData.unitId)?.name ||
-                            "Select a unit"
-                        }
-                        onClick={() => openPicker("Select Unit", units, "unitId")}
-                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
-                    />
-                </div>
-
-                {/* Quantity Input */}
-                <div>
-                    <h1 className="text-md font-semibold text-slate-600 mb-1">Quantity</h1>
-                    <input
-                        type="number"
-                        value={productEditData.quantity || 0}
-                        onChange={(e) =>
-                            onChange({ ...productEditData, quantity: Number(e.target.value) })
-                        }
-                        className="input input-md w-full border rounded-md p-2"
-                    />
-                </div>
-
                 {/* Expiration Date Picker */}
                 <div>
                     <h1 className="text-md font-semibold text-slate-600 mb-1">
@@ -138,6 +79,60 @@ export default function ModalInputs<T extends Partial<ProductCreateData>>({
                                 : "Select expiration date"
                         }
                         onClick={() => setShowCalendarModal(true)}
+                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
+                    />
+                </div>
+                {/* Quantity Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Quantity</h1>
+                    <input
+                        type="number"
+                        value={productEditData.quantity || 0}
+                        onChange={(e) =>
+                            onChange({ ...productEditData, quantity: Number(e.target.value) })
+                        }
+                        className="input input-md w-full border rounded-md p-2"
+                    />
+                </div>
+                {/* Unit Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Unit</h1>
+                    <input
+                        type="text"
+                        readOnly
+                        value={
+                            units.find((u) => u.id === productEditData.unitId)?.name ||
+                            "Select a unit"
+                        }
+                        onClick={() => openPicker("Select Unit", units, "unitId")}
+                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
+                    />
+                </div>
+                {/* Storage Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Storage</h1>
+                    <input
+                        type="text"
+                        readOnly
+                        value={
+                            storages.find((s) => s.id === productEditData.storageId)?.name ||
+                            "Select a storage"
+                        }
+                        onClick={() => openPicker("Select Storage", storages, "storageId")}
+                        className="input input-md w-full border rounded-md p-2 cursor-pointer"
+                    />
+                </div>
+                {/* Category Input */}
+                <div>
+                    <h1 className="text-md font-semibold text-slate-600 mb-1">Category</h1>
+                    <input
+                        type="text"
+                        readOnly
+                        value={
+                            categories.find((c) => c.id === productEditData.categoryId)?.name ||
+                            "Select a category"
+                        }
+                        onClick={() => openPicker("Select Category", categories, "categoryId")}
                         className="input input-md w-full border rounded-md p-2 cursor-pointer"
                     />
                 </div>

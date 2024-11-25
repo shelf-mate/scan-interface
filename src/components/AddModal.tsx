@@ -21,13 +21,11 @@ export default function AddModal({}: AddModalProps) {
   const { selectedStorage } = useStorage();
   const { createProduct: saveProduct } = useProduct();
   const [productData, setProductData] = useState<ProductEditData>({});
-
-  const modalRef = useRef<HTMLDialogElement>(null);
-  const confirmRef = useRef<HTMLDialogElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const confirmRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (currentProductTemplate && isNew) {
-      modalRef.current?.showModal();
       setProductData({
         name: currentProductTemplate?.name ?? "",
         categoryId: currentProductTemplate?.category?.id,
@@ -36,15 +34,16 @@ export default function AddModal({}: AddModalProps) {
             : new Date(),
         storageId: selectedStorage,
       });
+      if (modalRef.current) modalRef.current.classList.add("modal-open");
     } else {
-      modalRef.current?.close();
+      if (modalRef.current) modalRef.current.classList.remove("modal-open");
     }
   }, [currentProductTemplate, isNew, selectedStorage]);
 
   const handleDelete = () => {
     deleteProductTemplate();
-    confirmRef.current?.close();
-    modalRef.current?.close();
+    if (confirmRef.current) confirmRef.current.classList.remove("modal-open");
+    if (modalRef.current) modalRef.current.classList.remove("modal-open");
   };
 
   const handleSave = async () => {
@@ -88,7 +87,7 @@ export default function AddModal({}: AddModalProps) {
         });
         await saveProduct(productData as ProductCreateData);
         toast.success("Product successfully saved!");
-        modalRef.current?.close();
+        if (modalRef.current) modalRef.current.classList.remove("modal-open");
       } catch (err) {
         console.error("Error saving product:", err);
         toast.error("Failed to save the product. Please try again.");
@@ -97,23 +96,45 @@ export default function AddModal({}: AddModalProps) {
   };
 
   return (
-      <dialog
-          id="add_modal"
-          className="modal"
-          ref={modalRef}
-          onCancel={(e) => {
-            confirmRef.current?.showModal();
-            e.preventDefault();
-          }}
-      >
-        <dialog
-            className="modal"
-            ref={confirmRef}
-            onCancel={(e) => {
-              handleDelete();
-              e.preventDefault();
-            }}
-        >
+      <>
+        <Toaster position="top-center" />
+        <div ref={modalRef} className="modal">
+          <div className="modal-box bg-gray-100 rounded-xl shadow-lg max-w-[760px] w-full max-h-[440px] p-6 overflow-hidden">
+            <div className="text-center">
+              <h2 className="font-bold text-lg text-gray-800">New Product</h2>
+              <p className="text-gray-600 text-sm">
+                Fill in the details to add a new product.
+              </p>
+            </div>
+            <div className="mt-6">
+              <ModalInputs
+                  productEditData={productData}
+                  onChange={setProductData}
+                  onSave={handleSave}
+                  onCancel={() =>
+                      confirmRef.current?.classList.add("modal-open")
+                  }
+              />
+              <div className="modal-action p-1 flex justify-between">
+                <button
+                    className="max-w-[342px] w-full py-4 text-sm font-medium bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                    onClick={() =>
+                        confirmRef.current?.classList.add("modal-open")
+                    }
+                >
+                  Close
+                </button>
+                <button
+                    className="max-w-[342px] w-full py-4 text-sm font-medium bg-primaryColor text-white rounded-lg hover:bg-blue-600 transition"
+                    onClick={handleSave}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ref={confirmRef} className="modal">
           <div className="modal-box rounded-xl shadow-lg p-6 bg-white">
             <h3 className="font-bold text-lg text-gray-800">Confirmation</h3>
             <p className="py-4 text-gray-600">
@@ -122,7 +143,9 @@ export default function AddModal({}: AddModalProps) {
             <div className="flex justify-end gap-3">
               <button
                   className="px-4 py-2 text-sm font-medium bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-                  onClick={() => confirmRef.current?.close()}
+                  onClick={() =>
+                      confirmRef.current?.classList.remove("modal-open")
+                  }
               >
                 Back
               </button>
@@ -134,38 +157,7 @@ export default function AddModal({}: AddModalProps) {
               </button>
             </div>
           </div>
-        </dialog>
-        <Toaster position="top-center" />
-        <div className="modal-box p-6 max-h-[calc(100vh-2em)] max-w-[calc(100vw-2em)] h-full bg-white rounded-xl shadow-lg flex justify-center items-center flex-col overflow-hidden">
-          <div className="text-center">
-            <h2 className="font-bold text-lg text-gray-800">New Product</h2>
-            <p className="text-gray-600 text-sm">
-              Fill in the details to add a new product.
-            </p>
-          </div>
-          <div className="flex-1 w-full mt-4">
-            <ModalInputs
-                productEditData={productData}
-                onChange={setProductData}
-                onSave={handleSave}
-                onCancel={() => confirmRef.current?.showModal()}
-            />
-          </div>
-          <div className="flex justify-end gap-3 mt-6">
-            <button
-                className="px-4 py-2 text-sm font-medium bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-                onClick={() => confirmRef.current?.showModal()}
-            >
-              Close
-            </button>
-            <button
-                className="px-4 py-2 text-sm font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                onClick={handleSave}
-            >
-              Save
-            </button>
-          </div>
         </div>
-      </dialog>
+      </>
   );
 }
