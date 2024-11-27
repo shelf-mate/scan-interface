@@ -51,7 +51,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
       const data = JSON.parse(event.data);
       if (data.command === "error") {
         if (data.data.message) {
-          toast.error(data.data);
+          toast.error(data.data.message);
         }
         return;
       }
@@ -76,6 +76,7 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
             //@ts-ignore
             if (res.new) {
               setScanBlocked(true);
+              setCurEditProduct(undefined);
             } else {
               addProduct({
                 //@ts-ignore
@@ -129,6 +130,8 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
         setScanBlocked(false);
       });
     } catch (err) {
+      setScanBlocked(false);
+      toast.error("Error deleting product template");
       console.error(err);
     }
   };
@@ -142,6 +145,8 @@ export const ProductTemplateProvider: React.FC<{ children: ReactNode }> = ({
         setScanBlocked(false);
       });
     } catch (err) {
+      setScanBlocked(false);
+      toast.error("Error saving producttemplate");
       console.error(err);
     }
   };

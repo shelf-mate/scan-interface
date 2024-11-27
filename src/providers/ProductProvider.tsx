@@ -37,7 +37,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
   const createProduct = async (product: ProductCreateData) => {
     const res = await apiCreateProduct(product);
     //@ts-ignore
-    setProducts([...products, res.data]);
+    setProducts((prevProds) => ([...prevProds, res.data]));
     //@ts-ignore
     return res.data;
   };
@@ -53,7 +53,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({
     apiUpdateProduct(id, product).then((res) => {
       setProducts(
         //@ts-ignore
-        products.map((prod) => (prod.id === id ? res.data : prod))
+        [...products.map((prod) => (prod.id === id ? res.data : prod))]
       );
     });
   };
